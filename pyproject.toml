@@ -9,6 +9,8 @@ packages = [{include = "groll", from = "src"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 
+[tool.poetry.scripts]
+groll = "groll.groll:cli"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.2"
