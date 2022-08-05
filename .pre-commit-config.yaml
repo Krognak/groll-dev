@@ -30,4 +30,4 @@ repos:
     hooks:
     - id: pylint
       exclude: tests/
-      args: ["./src", "--max-line-length", "88"]
+      args: ["./src", "--max-line-length", "88", "--rcfile ./pyproject.toml"]
