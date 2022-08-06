@@ -4,10 +4,10 @@ import sys
 
 import click
 
-__version__ = "0.0.1"
+from . import __version__
 
 
-def parse(*args):
+def parse(args):
     """parse dice list into integer values"""
     click.echo(f"(g)rolling: {args}")
 
@@ -29,4 +29,4 @@ def cli(dice, **kwargs):
 
 
 if __name__ == "__main__":
-    cli(sys.argv[1:])
+    cli()  # pylint: disable=no-value-for-parameter
