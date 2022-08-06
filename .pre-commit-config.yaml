@@ -42,4 +42,3 @@ repos:
       language: system
       exclude: tests
       types: [python]
-      args: ["--strict"]
