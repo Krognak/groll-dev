@@ -25,9 +25,12 @@ repos:
       additional_dependencies: [mccabe]
       args: ["--max-line-length", "88", "--max-complexity", "10", "--ignore=E203"]
 
-  - repo: https://github.com/PyCQA/pylint/
-    rev: v2.14.5
+  - repo: local
     hooks:
     - id: pylint
+      name: pylint
+      entry: pylint
+      language: system
+      types: [python]
       exclude: tests/
-      args: ["./src", "--max-line-length", "88", "--rcfile ./pyproject.toml"]
+      args: ["./src/groll", "--max-line-length", "88", "--rcfile=pyproject.toml"]

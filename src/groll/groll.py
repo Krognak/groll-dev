@@ -1,19 +1,17 @@
 """A helpful, dice rolling goblin for the command line!"""
+import click
 
-import sys
-
-from groll import __version__
-
-
-def cli(args=None):
-    """entrypoint for CLI"""
-    if not args:
-        args = sys.argv[0 + 1 : :]
-    if "-v" in args or "--version" in args:
-        print(f"groll v{__version__} - {__doc__}")
-    else:
-        print(f"args supplied = {args}")
+__version__ = "0.0.1"
 
 
+@click.command()
+@click.option("-v", "--version", is_flag=True)
+def cli(**kwargs):
+    """A helpful, dice rolling goblin for the command line!"""
+    if "version" in kwargs:
+        click.echo(f"groll v{__version__} - {__doc__}")
+
+
+# pylint: disable=no-value-for-parameter,duplicate-code
 if __name__ == "__main__":
     cli()
