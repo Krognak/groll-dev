@@ -31,6 +31,5 @@ repos:
       name: pylint
       entry: pylint
       language: system
+      exclude: tests
       types: [python]
-      exclude: tests/
-      args: ["./src/groll", "--max-line-length", "88", "--rcfile=pyproject.toml"]
