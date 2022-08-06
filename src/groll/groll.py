@@ -1,5 +1,6 @@
 """A helpful, dice rolling goblin for the command line!"""
 
+import operator
 import random
 import re
 import sys
@@ -9,7 +10,13 @@ import click
 from . import __version__
 
 DICE_SYNTAX = r"\d*d\d+"
-OPERATORS = (r"\+", r"-", r"\*", r"\/")
+
+OPERATORS = {
+    "+": operator.add,
+    "-": operator.sub,
+    "*": operator.mul,
+    "/": operator.floordiv,
+}
 
 
 def roll(dstring):
@@ -32,11 +39,28 @@ def parse(dice):
     return re.sub(DICE_SYNTAX, roll, dstring)
 
 
+# pylint: disable=invalid-name
 def unstick(string):
     """unstick operators"""
-    for operator in OPERATORS:
-        string = re.sub(operator, f" {operator} ".replace("\\", ""), string)
-    return string.split()
+    for op in OPERATORS:
+        pattern = "".join(("\\", op))
+        string = re.sub(pattern, f" {op} ", string)
+    return string.split()  # pylint: enable=invalid-name
+
+
+def eval_maths(math_list):
+    """evaluate maths safely from list"""
+    if len(math_list) == 1:
+        result = math_list[0]
+    else:
+        result = 0
+        LHS, op, RHS, *rest = math_list
+        result += OPERATORS[op](int(LHS), int(RHS))
+        while rest:
+            math_list = [result] + rest
+            LHS, op, RHS, *rest = math_list
+            result += OPERATORS[op](int(LHS), int(RHS))
+    return result
 
 
 @click.command()
@@ -53,8 +77,9 @@ def cli(dice, **kwargs):
         click.echo(f"groll v{__version__} - {__doc__}")
         sys.exit()
     parsed_string = parse(dice)
-    unstuck_string = unstick(parsed_string)
-    click.echo(unstuck_string)
+    unstuck_list = unstick(parsed_string)
+    result = eval_maths(unstuck_list)
+    click.echo(result)
 
 
 if __name__ == "__main__":
