@@ -9,7 +9,7 @@ import click
 from . import __version__
 
 DICE_SYNTAX = r"\d*d\d+"
-OPERATORS = r"\+|-|\*|\/"
+OPERATORS = (r"\+", r"-", r"\*", r"\/")
 
 
 def roll(dstring):
@@ -32,6 +32,13 @@ def parse(dice):
     return re.sub(DICE_SYNTAX, roll, dstring)
 
 
+def unstick(string):
+    """unstick operators"""
+    for operator in OPERATORS:
+        string = re.sub(operator, f" {operator} ".replace("\\", ""), string)
+    return string.split()
+
+
 @click.command()
 @click.option(
     "--version",
@@ -46,7 +53,8 @@ def cli(dice, **kwargs):
         click.echo(f"groll v{__version__} - {__doc__}")
         sys.exit()
     parsed_string = parse(dice)
-    click.echo(parsed_string)
+    unstuck_string = unstick(parsed_string)
+    click.echo(unstuck_string)
 
 
 if __name__ == "__main__":
