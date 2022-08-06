@@ -33,3 +33,13 @@ repos:
       language: system
       exclude: tests
       types: [python]
+
+  - repo: local
+    hooks:
+    - id: mypy
+      name: mypy
+      entry: mypy
+      language: system
+      exclude: tests
+      types: [python]
+      args: ["--strict"]
