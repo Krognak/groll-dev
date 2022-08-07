@@ -3,41 +3,32 @@
 from __future__ import annotations
 
 import random
+import re
 import sys
-from dataclasses import dataclass
-from typing import Generator, List, Tuple, Union
+from collections import namedtuple
+from typing import List, Union
 
 import click
 
 from . import __version__
 
-
-@dataclass()
-class Dice:
-    """Dice dataclass, defaults to a single die"""
-
-    sides: int
-    number: int = 1
+Dice = namedtuple("Dice", ["num", "sides"])
 
 
-def get_dice(dice_string: str) -> Dice:
-    """Create Dice from string"""
-    number, sides = dice_string.split("d")
-    if number:
-        dice = Dice(int(sides), int(number))
-    else:
-        dice = Dice(int(sides))
-    return dice
+def roll(match):
+    """substitute dice rolls into match object, returning a string"""
+    num, sides = match.group(0).split("d")
+    num = int(num) if num else 1
+    sides = int(sides)
+    dice = Dice(num, sides)
+    results = (str(random.randint(1, dice.sides)) for _ in range(dice.num))
+    return "+".join(results)
 
 
-def roll(dice: Dice) -> Generator[int, None, None]:
-    """Generator containing random dice rolls"""
-    return (random.randint(1, dice.sides) for _ in range(dice.number))
-
-
-def parse(args: Tuple[str]) -> List[Union[str, int]]:
-    """Substitutes dice rolls and splits 'sticky' operators."""
-    return list(args)
+def parse(args: str) -> List[Union[str, int]]:
+    """Substitutes dice rolls and splits by operators."""
+    dstring = re.sub(r"\d*d\d+", roll, args)
+    return re.split(r"(\+|-|\*|\/)", dstring)
 
 
 @click.command(no_args_is_help=True)
@@ -54,7 +45,7 @@ def cli(args, **kwargs):
         click.echo(f"groll v{__version__} - {__doc__}")
         sys.exit()
     else:
-        parse(args)
+        parse("".join(args))
 
 
 if __name__ == "__main__":
